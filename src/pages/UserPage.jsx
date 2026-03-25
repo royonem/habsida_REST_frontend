@@ -5,10 +5,10 @@ import { apiFetch } from "../api/client";
 
 export default function UserPage() {
     const [user, setUser] = useState(null);
-    useEffect(() => { 
+    useEffect(() => {
         async function loadData() {
             try {
-                const data = await apiFetch("api/user/view");
+                const data = await apiFetch("/api/user/view");
                 setUser(data);
             } catch (err) {
                 console.error("Fetch error:", err);
@@ -19,8 +19,8 @@ export default function UserPage() {
     }, []);
     return (
         <div>
-        <UserInfo user={user}/>
-        <LogOut/>
+            {user && <UserInfo user={user} />}
+            <LogOut />
         </div>
     );
 }
