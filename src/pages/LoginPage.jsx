@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import LoginForm from "../components/LoginForm"
+import LoginForm from "../components/forms/LoginForm"
+import { apiFetch } from "../api/client";
 
 export default function LoginPage() {
     const navigate = useNavigate();
@@ -11,19 +12,11 @@ export default function LoginPage() {
     async function handleLogin(e) {
         e.preventDefault();
         try {
-            const res = await fetch("http://localhost:8080/api/auth/login", {
+            const data = await apiFetch("/api/auth/login", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password })
+                body: {username, password}
             });
-            if (!res.ok) {
-                const err = await res.json();
-                alert(err.message || "Login failed");
-                return;
-            }
-            const data = await res.json();
-            localStorage.setItem("token", data.token);
-
+            localStorage.setItem("token", data.token)
             if ((data.roleNames || []).includes("ROLE_ADMIN")) {
                 navigate("/admin");
             } else {
@@ -31,7 +24,7 @@ export default function LoginPage() {
             }
         } catch (err) {
             console.error(err);
-            alert("Network error or server is down");
+            alert("Please try again.");
         }
     };
 

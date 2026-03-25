@@ -1,5 +1,7 @@
 import { useState } from "react";
-import CreateUserForm from "../components/CreateUserForm";
+import CreateUserForm from "../forms/CreateUserForm";
+import { apiFetch, validatePasswords } from "../../api/client";
+
 
 export default function CreateUserView({ setUsers, setActiveTab }) {
     const [form, setForm] = useState({
@@ -10,7 +12,6 @@ export default function CreateUserView({ setUsers, setActiveTab }) {
         password: "",
         confirmPassword: ""
     });
-
     function handleChange(e) {
         const { name, value } = e.target;
         setForm(prev => ({
@@ -18,42 +19,22 @@ export default function CreateUserView({ setUsers, setActiveTab }) {
             [name]: value
         }));
     }
-
     async function handleSubmit(e) {
         e.preventDefault();
-        if (form.password !== form.confirmPassword) {
-            alert("Passwords do not match");
-            return;
-        }
         try {
-            const res = await fetch("http://localhost:8080/api/auth/register", {
+            validatePasswords(form.password, form.confirmPassword);
+            const createdUser = await apiFetch("/api/admin/users", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
+                body: {
                     username: form.username,
                     age: Number(form.age),
                     gender: form.gender,
                     country: form.country,
                     password: form.password,
                     confirmPassword: form.confirmPassword
-                })
-            });
-
-            if (!res.ok) {
-                const text = await res.text();
-                console.error("Backend error:", text);
-                throw new Error("Register failed");
-            }
-            const token = localStorage.getItem("token");
-            const usersRes = await fetch("http://localhost:8080/api/admin/users", {
-                headers: {
-                    "Authorization": `Bearer ${token}`
                 }
             });
-
-            const usersData = await usersRes.json();
+            const usersData = await apiFetch("/api/admin/users", {});
             setUsers(usersData);
             setForm({
                 username: "",
@@ -64,14 +45,12 @@ export default function CreateUserView({ setUsers, setActiveTab }) {
                 confirmPassword: ""
             });
             setActiveTab("view");
-            alert("Created user successfully!");
-
+            alert(`Created user ${createdUser.username} successfully!`);
         } catch (err) {
             console.error(err);
-            alert("Error creating user");
+            alert(`Error creating user: ${err.message}`);
         }
     }
-
     return (
         <CreateUserForm
             form={form}

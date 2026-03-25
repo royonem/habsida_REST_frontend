@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import useMeta from "../hooks/useMeta.jsx";
+import useMeta from "../../hooks/useMeta.jsx";
 
 export default function EditUserForm({ user, onSave, onCancel }) {
   const { genders, countries, loading } = useMeta();

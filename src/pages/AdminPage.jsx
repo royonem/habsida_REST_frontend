@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import SideBar from "../components/SideBar";
-import LogOut from "../components/LogOut";
+import SideBar from "../components/buttons/SideBar";
+import LogOut from "../components/buttons/LogOut";
 import UserInfo from "../components/UserInfo";
-import AdminView from "../components/AdminView";
+import AdminView from "../components/admin/AdminView";
 import { useLocation } from "react-router-dom";
+import { apiFetch } from "../api/client";
 
 export default function AdminPage() {
     const [users, setUsers] = useState([]);
-    const [error, setError] = useState(null);
     const [currentUser, setCurrentUser] = useState(null);
     const location = useLocation();
     const defaultTab = location.state?.tab || "view";
@@ -15,38 +15,22 @@ export default function AdminPage() {
     const [activeTab, setActiveTab] = useState(defaultTab);
 
     useEffect(() => {
-        console.log("admin page mounted");
-        const token = localStorage.getItem("token");
-
-        fetch("http://localhost:8080/api/user/view", {
-            headers: { "Authorization": `Bearer ${token}` }
-        })
-            .then(res => res.json())
-            .then(data => setCurrentUser(data))
-            .catch(err => console.error(err));
-
-        fetch("http://localhost:8080/api/admin/users", {
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
-        })
-            .then(async res => {
-                if (!res.ok) {
-                    const errorText = await res.text();
-                    console.error("Backend error:", errorText);
-                    throw new Error(errorText);
-                }
-                return res.json();
-            })
-            .then(data => setUsers(data))
-            .catch(err => {
+        async function loadData() {
+            try {
+                const [userData, usersData] = await Promise.all([
+                    apiFetch("/api/user/view"),
+                    apiFetch("/api/admin/users")]);
+                setCurrentUser(userData);
+                setUsers(usersData);
+            } catch (err) {
                 console.error("Fetch error:", err);
-                setError(err.message);
-            });
+                alert("Error fetching data.");
+            }
+        }
+        loadData();
     }, []);
-    if (error) return <div>{error}</div>;
 
-    return (
+        return (
         <div>
             <div className="d-flex">
                 <SideBar

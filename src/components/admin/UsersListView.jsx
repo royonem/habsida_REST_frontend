@@ -1,59 +1,48 @@
 import { useState } from "react";
-import UsersTable from "../components/UsersTable";
-import EditUserForm from "./EditUserForm";
+import UsersTable from "./UsersTable";
+import EditUserForm from "../forms/EditUserForm";
+import { apiFetch } from "../../api/client";
 
 export default function UsersListView({ users, setUsers }) {
-    const [editingUser, setEditingUser] = useState(null);
+    const [editingUser, setEditingUser] = useState(null); // used only for modal
     function handleEditClick(user) {
         setEditingUser(user);
     };
     async function handleEditSubmit(updatedUser) {
-        const token = localStorage.getItem("token");
-        const res = await fetch(`http://localhost:8080/api/admin/users/${updatedUser.id}`, {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify(updatedUser)
-        });
-
-        if (res.ok) {
-            setUsers(prev => prev.map(u => (u.id === updatedUser.id ? updatedUser : u)));
+        try {
+            validatePasswords(updatedUser.password, updatedUser.confirmPassword);
+            const updatedUserData = apiFetch(`/api/admin/users/${updatedUser.id}`, {
+                method: "PATCH",
+                body: updatedUser
+            });
+            setUsers(prev => prev.map(u => (u.id === updatedUserData.id ? updatedUserData : u)));
             setEditingUser(null);
-        } else {
+            alert(`Edited user ${updatedUserData.username} successfully!`);
+        } catch (err) {
+            console.error(err);
             alert("Failed to update user");
         }
-        alert("Edited user successfully!");
     };
     async function handleDelete(user) {
-        const token = localStorage.getItem("token");
-        const res = await fetch(
-            `http://localhost:8080/api/admin/users/${user.id}`,
-            {
+        try {
+            await apiFetch(`/api/admin/users/${user.id}`, {
                 method: "DELETE",
-                headers: {
-                    "Authorization": `Bearer ${token}`
-                }
-            }
-        );
-
-        if (res.ok) {
+            });
             setUsers(prev => prev.filter(u => u.id !== user.id));
-        } else {
+            alert(`Deleted user ${user.username} successfully!`);
+        } catch (err) {
+            console.error(err);
             alert("Failed to delete user");
         }
     }
     return (
         <>
             <UsersTable users={users} onEdit={handleEditClick} onDelete={handleDelete} />
-
             {editingUser && (
                 <div className="modal d-block" style={{ background: "rgba(0,0,0,0.5)" }}>
                     <div className="modal-dialog">
                         <div className="modal-content p-4">
                             <h5>Edit User</h5>
-
                             <EditUserForm
                                 user={editingUser}
                                 onSave={handleEditSubmit}

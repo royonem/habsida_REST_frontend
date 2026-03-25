@@ -1,37 +1,22 @@
 import { useEffect, useState } from "react";
-import LogOut from "../components/LogOut";
+import LogOut from "../components/buttons/LogOut";
 import UserInfo from "../components/UserInfo";
+import { apiFetch } from "../api/client";
 
 export default function UserPage() {
-    const [user, setUser] = useState([]);
-    const [error, setError] = useState(null);
-
-    useEffect(() => {
-        console.log("user page mounted");
-        const token = localStorage.getItem("token");
-
-        fetch("http://localhost:8080/api/user/view", {
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
-        })
-            .then(async res => {
-                if (!res.ok) {
-                    const errorText = await res.text();
-                    console.error("Backend error:", errorText);
-                    throw new Error(errorText);
-                }
-                return res.json();
-            })
-            .then(data => setUser(data))
-            .catch(err => {
+    const [user, setUser] = useState(null);
+    useEffect(() => { 
+        async function loadData() {
+            try {
+                const data = await apiFetch("api/user/view");
+                setUser(data);
+            } catch (err) {
                 console.error("Fetch error:", err);
-                setError(err.message);
-            });
+                alert("Error fetching data.");
+            }
+        }
+        loadData();
     }, []);
-
-    if (error) return <div>{error}</div>;
-
     return (
         <div>
         <UserInfo user={user}/>

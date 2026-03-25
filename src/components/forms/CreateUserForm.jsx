@@ -1,4 +1,4 @@
-import useMeta from '../hooks/useMeta.jsx'
+import useMeta from '../../hooks/useMeta.jsx'
 
 export default function CreateUserForm({ form, handleSubmit, handleChange }) {
     const { genders, countries, loading } = useMeta();

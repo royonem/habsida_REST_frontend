@@ -2,7 +2,6 @@ import UsersListView from "./UsersListView";
 import CreateUserView from "./CreateUserView";
 
 export default function AdminView({ users, setUsers, activeTab, setActiveTab }) {
-
     return (
         <div className="d-flex justify-content-center">
             <div style={{ width: "100%", maxWidth: "800px" }}>
@@ -31,7 +30,6 @@ export default function AdminView({ users, setUsers, activeTab, setActiveTab }) 
                             setUsers={setUsers}
                         />
                     )}
-
                     {activeTab === "add" && (
                         <CreateUserView
                             setUsers={setUsers}
