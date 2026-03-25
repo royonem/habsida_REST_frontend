@@ -10,7 +10,7 @@ export default function UsersListView({ users, setUsers }) {
     };
     async function handleEditSubmit(updatedUser) {
         try {
-            validatePasswords(updatedUser.password, updatedUser.confirmPassword);
+            validatePassword(updatedUser.password, updatedUser.confirmPassword);
             const updatedUserData = apiFetch(`/api/admin/users/${updatedUser.id}`, {
                 method: "PATCH",
                 body: updatedUser
@@ -26,7 +26,7 @@ export default function UsersListView({ users, setUsers }) {
     async function handleDelete(user) {
         try {
             await apiFetch(`/api/admin/users/${user.id}`, {
-                method: "DELETE",
+                method: "DELETE"
             });
             setUsers(prev => prev.filter(u => u.id !== user.id));
             alert(`Deleted user ${user.username} successfully!`);

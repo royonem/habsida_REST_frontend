@@ -14,9 +14,11 @@ export default function LoginPage() {
         try {
             const data = await apiFetch("/api/auth/login", {
                 method: "POST",
-                body: {username, password}
+                body: {username, password},
+                skipAuth: true
             });
-            localStorage.setItem("token", data.token)
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("roles", data.roleNames)
             if ((data.roleNames || []).includes("ROLE_ADMIN")) {
                 navigate("/admin");
             } else {

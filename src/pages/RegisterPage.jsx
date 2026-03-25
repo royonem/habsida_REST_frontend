@@ -1,7 +1,8 @@
 import CreateUserForm from '../components/forms/CreateUserForm.jsx';
 import GoBack from '../components/buttons/GoBack.jsx';
 import { useNavigate } from "react-router-dom";
-import { apiFetch, validatePasswords } from "../api/client";
+import { useState } from 'react';
+import { apiFetch, validatePassword } from "../api/client";
 
 
 export default function RegisterPage() {
@@ -18,7 +19,7 @@ export default function RegisterPage() {
     async function handleSubmit(e) {
         e.preventDefault();
         try {
-            validatePasswords(form.password, form.confirmPassword);
+            validatePassword(form.password, form.confirmPassword);
             await apiFetch("/api/auth/register", {
                 method: "POST",
                 body: {
@@ -28,7 +29,8 @@ export default function RegisterPage() {
                     country: form.country,
                     password: form.password,
                     confirmPassword: form.confirmPassword
-                }
+                },
+                skipAuth: true
             });
             navigate("/login");
             alert("Registered successfully!");

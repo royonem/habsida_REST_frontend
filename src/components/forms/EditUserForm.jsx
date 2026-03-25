@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import useMeta from "../../hooks/useMeta.jsx";
+import { validatePassword } from "../../api/client.jsx";
 
 export default function EditUserForm({ user, onSave, onCancel }) {
   const { genders, countries, loading } = useMeta();
@@ -35,12 +36,7 @@ export default function EditUserForm({ user, onSave, onCancel }) {
 
   function handleSubmit(e) {
     e.preventDefault();
-
-    if (editForm.password && editForm.password !== editForm.confirmPassword) {
-      alert("Passwords do not match");
-      return;
-    }
-
+    validatePassword(editForm.password, editForm.confirmPassword);
     onSave(editForm);
   }
 

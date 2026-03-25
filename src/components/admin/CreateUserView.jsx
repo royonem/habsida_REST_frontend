@@ -1,6 +1,6 @@
 import { useState } from "react";
 import CreateUserForm from "../forms/CreateUserForm";
-import { apiFetch, validatePasswords } from "../../api/client";
+import { apiFetch, validatePassword } from "../../api/client";
 
 
 export default function CreateUserView({ setUsers, setActiveTab }) {
@@ -22,7 +22,7 @@ export default function CreateUserView({ setUsers, setActiveTab }) {
     async function handleSubmit(e) {
         e.preventDefault();
         try {
-            validatePasswords(form.password, form.confirmPassword);
+            validatePassword(form.password, form.confirmPassword);
             const createdUser = await apiFetch("/api/admin/users", {
                 method: "POST",
                 body: {
