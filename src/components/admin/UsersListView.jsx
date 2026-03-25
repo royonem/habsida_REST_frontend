@@ -1,7 +1,7 @@
 import { useState } from "react";
 import UsersTable from "./UsersTable";
 import EditUserForm from "../forms/EditUserForm";
-import { apiFetch } from "../../api/client";
+import { apiFetch, validatePassword } from "../../api/client";
 
 export default function UsersListView({ users, setUsers }) {
     const [editingUser, setEditingUser] = useState(null); // used only for modal
