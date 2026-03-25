@@ -76,7 +76,7 @@ export default function EditUserForm({ user, onSave, onCancel }) {
           <select
             name="gender"
             className="form-select"
-            value={editForm.gender}
+            value={editForm.gender || ""}
             onChange={handleChange}
             required
           >
@@ -92,7 +92,7 @@ export default function EditUserForm({ user, onSave, onCancel }) {
           <select
             name="country"
             className="form-select"
-            value={editForm.country}
+            value={editForm.country || ""}
             onChange={handleChange}
             required
           >
