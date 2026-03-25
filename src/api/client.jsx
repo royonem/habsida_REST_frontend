@@ -1,9 +1,9 @@
-export const apiFetch = async (path, { method = "GET", body, headers = {} } = {}) => {
+export const apiFetch = async (path, { method = "GET", body, headers = {}, skipAuth = false } = {}) => {
     const token = localStorage.getItem("token");
     const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}${path}`, {
         method,
         headers: {
-            "Authorization": token ? `Bearer ${token}` : undefined,
+            ...(token && !skipAuth ? { "Authorization": `Bearer ${token}` } : {}),
             "Content-Type": "application/json",
             ...headers
         },
@@ -15,10 +15,11 @@ export const apiFetch = async (path, { method = "GET", body, headers = {} } = {}
         console.error("Backend error:", text);
         throw new Error(`Request failed: ${res.status}`);
     }
-    return res.json();
+    const text = await res.text();
+    return text ? JSON.parse(text) : null;
 };
 
-export function validatePasswords(password, confirmPassword) {
+export function validatePassword(password, confirmPassword) {
     if (!password && !confirmPassword) return true;
     if (password !== confirmPassword) {
         throw new Error("Passwords do not match");
