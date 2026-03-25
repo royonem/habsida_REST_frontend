@@ -11,10 +11,11 @@ export default function UsersListView({ users, setUsers }) {
     async function handleEditSubmit(updatedUser) {
         try {
             validatePassword(updatedUser.password, updatedUser.confirmPassword);
-            const updatedUserData = apiFetch(`/api/admin/users/${updatedUser.id}`, {
+            await apiFetch(`/api/admin/users/${updatedUser.id}`, {
                 method: "PATCH",
                 body: updatedUser
             });
+            const updatedUserData = await apiFetch(`/api/admin/users/${updatedUser.id}`);
             setUsers(prev => prev.map(u => (u.id === updatedUserData.id ? updatedUserData : u)));
             setEditingUser(null);
             alert(`Edited user ${updatedUserData.username} successfully!`);
