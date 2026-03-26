@@ -10,7 +10,8 @@ export default function CreateUserView({ setUsers, setActiveTab }) {
         gender: "",
         country: "",
         password: "",
-        confirmPassword: ""
+        confirmPassword: "",
+        roleIds: []
     });
     function handleChange(e) {
         const { name, value } = e.target;
@@ -31,7 +32,8 @@ export default function CreateUserView({ setUsers, setActiveTab }) {
                     gender: form.gender,
                     country: form.country,
                     password: form.password,
-                    confirmPassword: form.confirmPassword
+                    confirmPassword: form.confirmPassword,
+                    roleIds: form.roleIds
                 }
             });
             const usersData = await apiFetch("/api/admin/users", {});
@@ -45,7 +47,7 @@ export default function CreateUserView({ setUsers, setActiveTab }) {
                 confirmPassword: ""
             });
             setActiveTab("view");
-            alert(`Created user ${createdUser.username} successfully!`);
+            alert(`Created user ${form.username} successfully!`);
         } catch (err) {
             console.error(err);
             alert(`Error creating user: ${err.message}`);
@@ -54,8 +56,10 @@ export default function CreateUserView({ setUsers, setActiveTab }) {
     return (
         <CreateUserForm
             form={form}
+            setForm={setForm}
             handleChange={handleChange}
             handleSubmit={handleSubmit}
+            isAdmin={true}
         />
     );
 }

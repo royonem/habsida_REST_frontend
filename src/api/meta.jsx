@@ -7,3 +7,7 @@ export async function getGenders() {
 export async function getCountries() {
     return apiFetch("/api/meta/countries");
 }
+
+export async function getRoles() {
+    return apiFetch("/api/meta/roles");
+}

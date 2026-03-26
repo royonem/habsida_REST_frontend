@@ -14,7 +14,8 @@ export default function RegisterPage() {
         gender: "",
         country: "",
         password: "",
-        confirmPassword: ""
+        confirmPassword: "",
+        roleIds: []
     })
     async function handleSubmit(e) {
         e.preventDefault();
@@ -51,7 +52,7 @@ export default function RegisterPage() {
     return (
         <div className="d-flex flex-column justify-content-center align-items-center min-vh-100">
             <h3 className="mb-4 text-center">Register</h3>
-            <CreateUserForm handleSubmit={handleSubmit} handleChange={handleChange} form={form} />
+            <CreateUserForm handleSubmit={handleSubmit} handleChange={handleChange} form={form} setForm={setForm} />
             <div className="text-center mt-3">
                 <GoBack />
             </div>
