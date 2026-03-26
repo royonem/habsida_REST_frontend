@@ -24,7 +24,7 @@ export default function CreateUserView({ setUsers, setActiveTab }) {
         e.preventDefault();
         try {
             validatePassword(form.password, form.confirmPassword);
-            const createdUser = await apiFetch("/api/admin/users", {
+            await apiFetch("/api/admin/users", {
                 method: "POST",
                 body: {
                     username: form.username,

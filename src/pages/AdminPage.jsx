@@ -53,6 +53,8 @@ export default function AdminPage() {
                                     setUsers={setUsers}
                                     activeTab={activeTab}
                                     setActiveTab={setActiveTab}
+                                    currentUser={currentUser}
+                                    setCurrentUser={setCurrentUser}
                                 />
                             </div>
                         </>

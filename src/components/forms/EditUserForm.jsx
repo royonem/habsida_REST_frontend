@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import useMeta from "../../hooks/useMeta.jsx";
 import { validatePassword } from "../../api/client.jsx";
 
-export default function EditUserForm({ user, onSave, onCancel }) {
-  const { genders, countries, loading } = useMeta();
+export default function EditUserForm({ user, onSave, onCancel, isAdmin = false }) {
+  const { genders, countries, loading, roles } = useMeta();
 
   const [editForm, setEditForm] = useState({
     id: "",
@@ -12,10 +12,24 @@ export default function EditUserForm({ user, onSave, onCancel }) {
     gender: "",
     country: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
+    roleIds: user.roleIds || []
   });
 
+  const handleRoleChange = (e) => {
+    const roleId = Number(e.target.value);
+    const checked = e.target.checked;
+
+    setEditForm(prev => ({
+      ...prev,
+      roleIds: checked
+        ? [...prev.roleIds, roleId]
+        : prev.roleIds.filter(id => id !== roleId)
+    }));
+  };
+
   useEffect(() => {
+    console.log(user);
     if (user) {
       setEditForm({
         id: user.id,
@@ -24,7 +38,8 @@ export default function EditUserForm({ user, onSave, onCancel }) {
         gender: user.gender,
         country: user.country,
         password: "",
-        confirmPassword: ""
+        confirmPassword: "",
+        roleIds: user.roleIds || []
       });
     }
   }, [user]);
@@ -126,7 +141,24 @@ export default function EditUserForm({ user, onSave, onCancel }) {
             placeholder="Re-enter password"
           />
         </div>
-
+        {isAdmin && (
+          <div className="mb-3">
+            <label>Roles</label>
+            <div style={{ maxHeight: "150px", overflowY: "auto" }}>
+              {roles.map(role => (
+                <div key={role.id}>
+                  <input
+                    type="checkbox"
+                    value={role.id}
+                    checked={editForm.roleIds?.includes(role.id)}
+                    onChange={handleRoleChange}
+                  />
+                  {role.name.replace("ROLE_", "")}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         <div className="d-flex justify-content-between">
           <button type="button" className="btn btn-secondary" onClick={onCancel}>
             Back

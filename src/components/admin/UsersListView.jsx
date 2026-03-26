@@ -3,7 +3,7 @@ import UsersTable from "./UsersTable";
 import EditUserForm from "../forms/EditUserForm";
 import { apiFetch, validatePassword } from "../../api/client";
 
-export default function UsersListView({ users, setUsers }) {
+export default function UsersListView({ users, setUsers, currentUser, setCurrentUser }) {
     const [editingUser, setEditingUser] = useState(null); // used only for modal
     function handleEditClick(user) {
         setEditingUser(user);
@@ -17,6 +17,9 @@ export default function UsersListView({ users, setUsers }) {
             });
             const updatedUserData = await apiFetch(`/api/admin/users/${updatedUser.id}`);
             setUsers(prev => prev.map(u => (u.id === updatedUserData.id ? updatedUserData : u)));
+            if (currentUser?.id === updatedUserData.id) {
+                setCurrentUser(updatedUserData);
+            }
             setEditingUser(null);
             alert(`Edited user ${updatedUserData.username} successfully!`);
         } catch (err) {
@@ -48,6 +51,7 @@ export default function UsersListView({ users, setUsers }) {
                                 user={editingUser}
                                 onSave={handleEditSubmit}
                                 onCancel={() => setEditingUser(null)}
+                                isAdmin={true}
                             />
                         </div>
                     </div>
